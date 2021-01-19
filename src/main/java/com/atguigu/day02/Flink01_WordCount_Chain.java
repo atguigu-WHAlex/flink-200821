@@ -1,32 +1,47 @@
-package com.atguigu.day01;
+package com.atguigu.day02;
 
+import com.atguigu.day01.Flink02_WordCount_Bounded;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.util.Collector;
 
-/**
- * 关于并行度优先级问题：
- * 1.代码中算子单独设置
- * 2.代码中Env全局设置
- * 3.提交参数
- * 4.默认配置信息
- */
-public class Flink03_WordCount_Unbounded {
+public class Flink01_WordCount_Chain {
 
     public static void main(String[] args) throws Exception {
 
         //1.获取执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(2);
+        env.setParallelism(1);
+
+        //全局禁用任务链
+        //env.disableOperatorChaining();
 
         //2.读取端口数据创建流
         DataStreamSource<String> socketTextStream = env.socketTextStream("hadoop102", 9999);
 
         //3.将每行数据压平并转换为元组
-        SingleOutputStreamOperator<Tuple2<String, Integer>> wordToOneDS = socketTextStream.flatMap(new Flink02_WordCount_Bounded.LineToTupleFlatMapFunc());
+        SingleOutputStreamOperator<String> wordDS = socketTextStream.flatMap(new FlatMapFunction<String, String>() {
+            @Override
+            public void flatMap(String value, Collector<String> out) throws Exception {
+                String[] words = value.split(" ");
+                for (String word : words) {
+                    out.collect(word);
+                }
+            }
+        }).disableChaining();
+
+        SingleOutputStreamOperator<Tuple2<String, Integer>> wordToOneDS = wordDS.map(new MapFunction<String, Tuple2<String, Integer>>() {
+            @Override
+            public Tuple2<String, Integer> map(String value) throws Exception {
+                return new Tuple2<>(value, 1);
+            }
+        });
 
         //4.分组
         KeyedStream<Tuple2<String, Integer>, String> keyedStream = wordToOneDS.keyBy(new KeySelector<Tuple2<String, Integer>, String>() {
@@ -40,8 +55,6 @@ public class Flink03_WordCount_Unbounded {
         SingleOutputStreamOperator<Tuple2<String, Integer>> result = keyedStream.sum(1);
 
         //6.打印结果
-//        socketTextStream.print("Line");
-//        wordToOneDS.print("WordToDS");
         result.print("Result");
 
         //7.启动任务
