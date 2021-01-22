@@ -2,6 +2,10 @@ package com.atguigu.day04;
 
 import com.atguigu.bean.OrderEvent;
 import com.atguigu.bean.TxEvent;
+import com.atguigu.bean.WaterSensor;
+import org.apache.flink.api.common.eventtime.WatermarkGenerator;
+import org.apache.flink.api.common.eventtime.WatermarkGeneratorSupplier;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
