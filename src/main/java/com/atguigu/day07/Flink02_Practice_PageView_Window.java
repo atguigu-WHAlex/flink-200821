@@ -1,4 +1,4 @@
-package com.atguigu.practice;
+package com.atguigu.day07;
 
 import com.atguigu.bean.UserBehavior;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
-public class Flink06_Practice_PageView_Window {
+public class Flink02_Practice_PageView_Window {
 
     public static void main(String[] args) throws Exception {
 

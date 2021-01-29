@@ -1,4 +1,4 @@
-package com.atguigu.practice;
+package com.atguigu.day07;
 
 import com.atguigu.bean.PageViewCount;
 import com.atguigu.bean.UserBehavior;
@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Random;
 
-public class Flink07_Practice_PageView_Window2 {
+public class Flink03_Practice_PageView_Window2 {
 
     public static void main(String[] args) throws Exception {
 

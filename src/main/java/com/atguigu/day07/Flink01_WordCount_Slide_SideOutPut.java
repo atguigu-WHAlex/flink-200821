@@ -1,4 +1,4 @@
-package com.atguigu.practice;
+package com.atguigu.day07;
 
 import com.atguigu.bean.WaterSensor;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
@@ -16,7 +16,7 @@ import org.apache.flink.util.OutputTag;
 
 import java.time.Duration;
 
-public class Flink05_WordCount_Slide_SideOutPut {
+public class Flink01_WordCount_Slide_SideOutPut {
 
     public static void main(String[] args) throws Exception {
 
