@@ -191,7 +191,7 @@ public class Flink01_Practice_HotUrl {
                     .append("\n")
                     .append("\n");
 
-            //1输出数据
+            //输出数据
             out.collect(sb.toString());
 
             //休息一会

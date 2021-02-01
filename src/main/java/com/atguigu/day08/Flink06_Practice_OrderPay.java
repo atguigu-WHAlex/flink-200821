@@ -13,8 +13,6 @@ import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 import org.apache.flink.util.OutputTag;
 
-import javax.management.ValueExp;
-
 public class Flink06_Practice_OrderPay {
 
     public static void main(String[] args) throws Exception {
