@@ -16,7 +16,7 @@ import java.time.Duration;
 import static org.apache.flink.table.api.Expressions.$;
 import static org.apache.flink.table.api.Expressions.lit;
 
-public class FlinkSQL11_TableAPI_GroupWindow_SessionWindow_EventTime {
+public class FlinkSQL12_TableAPI_GroupWindow_SessionWindow_EventTime {
 
     public static void main(String[] args) throws Exception {
 
