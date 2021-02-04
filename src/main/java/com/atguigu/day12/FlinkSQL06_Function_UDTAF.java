@@ -10,6 +10,9 @@ import org.apache.flink.table.functions.AggregateFunction;
 import org.apache.flink.table.functions.TableAggregateFunction;
 import org.apache.flink.util.Collector;
 
+import static org.apache.flink.table.api.Expressions.$;
+import static org.apache.flink.table.api.Expressions.call;
+
 public class FlinkSQL06_Function_UDTAF {
 
     public static void main(String[] args) throws Exception {
@@ -32,9 +35,15 @@ public class FlinkSQL06_Function_UDTAF {
         Table table = tableEnv.fromDataStream(waterSensorDS);
 
         //4.先注册再使用
-//        tableEnv.createTemporarySystemFunction("myavg", MyAvg.class);
+        tableEnv.createTemporarySystemFunction("top2", Top2.class);
 
         //TableAPI
+        table
+                .groupBy($("id"))
+                .flatAggregate(call("top2", $("vc")).as("top", "rank"))
+                .select($("id"), $("top"), $("rank"))
+                .execute()
+                .print();
 
         //6.执行任务
         env.execute();
@@ -45,19 +54,26 @@ public class FlinkSQL06_Function_UDTAF {
 
         @Override
         public VcTop2 createAccumulator() {
-            return new VcTop2();
+            return new VcTop2(Integer.MIN_VALUE, Integer.MIN_VALUE);
         }
 
         public void accumulate(VcTop2 acc, Integer value) {
 
+            if (value > acc.getTopOne()) {
+                acc.setTopTwo(acc.getTopOne());
+                acc.setTopOne(value);
+            } else if (value > acc.getTopTwo()) {
+                acc.setTopTwo(value);
+            }
         }
 
-        public void emitValue(VcTop2 acc, Collector<Tuple2<Integer, Integer>> out) {
+        public void emitValue(VcTop2 acc, Collector<Tuple2<Integer, String>> out) {
+            out.collect(new Tuple2<>(acc.getTopOne(), "Top1"));
+            if (acc.getTopTwo() > Integer.MIN_VALUE) {
+                out.collect(new Tuple2<>(acc.getTopTwo(), "Top2"));
+            }
 
         }
-
-
     }
-
 
 }
